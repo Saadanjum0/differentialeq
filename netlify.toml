@@ -1,9 +1,13 @@
 [build]
   publish = "static"
-  command = "mkdir -p static && cp -r static/css static/ && cp -r static/js static/ && cp -r templates/index.html static/index.html"
+  command = "bash ./netlify-build.sh"
+
+[build.environment]
+  PYTHON_VERSION = "3.9"
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"

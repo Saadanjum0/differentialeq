@@ -1,0 +1,8 @@
+build:
+  environment:
+    PYTHON_VERSION: 3.9
+    NODE_VERSION: 16
+
+functions:
+  '*':
+    runtime: nodejs16.x 
