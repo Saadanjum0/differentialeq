@@ -489,11 +489,47 @@ footer {
     
     /* Improve example boxes for mobile */
     .example-box {
-        padding: 1rem;
+        padding: 0.8rem;
     }
     
     .example-box:hover {
         transform: none; /* Disable hover effect on mobile */
+    }
+    
+    /* Make examples more compact on mobile */
+    .example-grid-compact {
+        gap: 10px;
+    }
+    
+    #quick-examples {
+        padding: 0.8rem;
+    }
+    
+    #quick-examples .example-box {
+        padding: 0.8rem;
+    }
+    
+    #quick-examples .example-box h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    #quick-examples .example-box p {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+        line-height: 1.3;
+    }
+    
+    #quick-examples .button-group {
+        margin-top: 0.4rem;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    #quick-examples .use-example-btn {
+        padding: 5px;
+        font-size: 0.75rem;
+        min-height: 30px;
     }
     
     /* Adjust footer for mobile */
@@ -515,12 +551,20 @@ footer {
     
     .example-grid-compact {
         grid-template-columns: 1fr;
+        margin: 0.3rem 0;
     }
     
     /* Make buttons larger for easier tapping */
-    .btn, .use-example-btn {
+    .btn {
         padding: 12px;
         font-size: 1rem;
+    }
+    
+    /* But keep example buttons smaller */
+    .use-example-btn {
+        padding: 8px 5px;
+        font-size: 0.75rem;
+        min-height: 36px;
     }
     
     /* Increase spacing between elements */
@@ -540,11 +584,61 @@ footer {
         margin: 3px 0;
         padding: 5px 8px;
     }
+    
+    /* Make examples section more compact */
+    #quick-examples {
+        margin-bottom: 1.5rem;
+        padding: 0.7rem;
+    }
+    
+    #quick-examples h2 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+    
+    #quick-examples .example-box {
+        padding: 0.7rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+    header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .section h2 {
+        font-size: 1.1rem;
+    }
+    
+    #quick-examples .example-box {
+        padding: 0.6rem;
+    }
+    
+    #quick-examples .example-box h3 {
+        font-size: 0.85rem;
+    }
+    
+    #quick-examples .example-box p {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+    
+    .examples-mini {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .examples-mini code {
+        padding: 3px 4px;
+        font-size: 0.75rem;
+    }
 }
 
 /* Ensure touch targets are at least 44px x 44px for accessibility */
 @media (max-width: 768px) {
-    .btn, .use-example-btn, input[type="text"], input[type="button"] {
+    .btn, input[type="text"], input[type="button"] {
         min-height: 44px;
     }
     
@@ -556,5 +650,30 @@ footer {
     /* Improve readability of math expressions */
     .MathJax {
         font-size: 110% !important;
+    }
+}
+
+/* Mobile-friendly examples specific styles */
+.mobile-friendly-examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .mobile-friendly-examples {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-friendly-examples {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .mobile-friendly-examples .example-box {
+        margin-bottom: 8px;
     }
 } 
