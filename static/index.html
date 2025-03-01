@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differential Equation Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Differential Equation Analyzer</h1>
+            <p class="subtitle">Analyze, verify and visualize differential equations</p>
+        </header>
+        
+        <main>
+            <section class="section" id="linearity-checker">
+                <h2>Linearity Checker</h2>
+                <p>Enter a differential equation to check if it's linear:</p>
+                <div class="input-group">
+                    <input type="text" id="equation-input" placeholder="Enter differential equation (e.g., y' + 2*y = sin(x))">
+                    <button id="check-linearity" class="btn primary-btn">Check Linearity</button>
+                </div>
+                <div class="examples-mini">
+                    <p><strong>Example:</strong> Try <code>y' + 2*y = sin(x)</code> (linear) or <code>y' = y^2 * sin(x)</code> (non-linear)</p>
+                </div>
+                <div id="linearity-result" class="result-area"></div>
+            </section>
+            
+            <section class="section examples-section" id="quick-examples">
+                <h2>Common Examples</h2>
+                <div class="example-grid-compact">
+                    <div class="example-box">
+                        <h3>First-Order Linear</h3>
+                        <p>DE: y' + 2*y = sin(x)</p>
+                        <p>Solution: y = e^(-2*x) * (C + 0.5*sin(x) - 0.5*cos(x))</p>
+                        <div class="button-group">
+                            <button class="use-example-btn" data-target="linearity" data-de="y' + 2*y = sin(x)">
+                                Use for Linearity
+                            </button>
+                            <button class="use-example-btn" data-target="solution" data-de="y' + 2*y = sin(x)" data-solution="y = e^(-2*x) * (C + 0.5*sin(x) - 0.5*cos(x))">
+                                Use for Solution
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="example-box">
+                        <h3>Second-Order Linear</h3>
+                        <p>DE: y'' + 4*y = 0</p>
+                        <p>Solution: y = C1*cos(2*x) + C2*sin(2*x)</p>
+                        <div class="button-group">
+                            <button class="use-example-btn" data-target="linearity" data-de="y'' + 4*y = 0">
+                                Use for Linearity
+                            </button>
+                            <button class="use-example-btn" data-target="solution" data-de="y'' + 4*y = 0" data-solution="y = C1*cos(2*x) + C2*sin(2*x)">
+                                Use for Solution
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="example-box">
+                        <h3>Separable Equation</h3>
+                        <p>DE: y' = y^2 * sin(x)</p>
+                        <p>Solution: y = 1/(C - cos(x))</p>
+                        <div class="button-group">
+                            <button class="use-example-btn" data-target="linearity" data-de="y' = y^2 * sin(x)">
+                                Use for Linearity
+                            </button>
+                            <button class="use-example-btn" data-target="solution" data-de="y' = y^2 * sin(x)" data-solution="y = 1/(C - cos(x))">
+                                Use for Solution
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="example-box">
+                        <h3>Bernoulli Equation</h3>
+                        <p>DE: y' + y = y^2 * e^x</p>
+                        <p>Solution: y = 1/(C*e^x - 1)</p>
+                        <div class="button-group">
+                            <button class="use-example-btn" data-target="linearity" data-de="y' + y = y^2 * e^x">
+                                Use for Linearity
+                            </button>
+                            <button class="use-example-btn" data-target="solution" data-de="y' + y = y^2 * e^x" data-solution="y = 1/(C*e^x - 1)">
+                                Use for Solution
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section" id="solution-verifier">
+                <h2>Solution Verifier</h2>
+                <p>Verify if a function is a solution to a differential equation:</p>
+                <div class="input-group">
+                    <label for="de-input">Differential Equation:</label>
+                    <input type="text" id="de-input" placeholder="Enter differential equation (e.g., y' + 2*y = sin(x))">
+                </div>
+                <div class="input-group">
+                    <label for="solution-input">Proposed Solution:</label>
+                    <input type="text" id="solution-input" placeholder="Enter solution (e.g., y = e^(-2*x) * (C + 0.5*sin(x) - 0.5*cos(x)))">
+                </div>
+                <div class="examples-mini">
+                    <p><strong>Example:</strong> Try DE: <code>y' + 2*y = sin(x)</code> with solution: <code>y = e^(-2*x) * (C + 0.5*sin(x) - 0.5*cos(x))</code></p>
+                </div>
+                <button id="verify-solution" class="btn primary-btn">Verify Solution</button>
+                <div id="verification-result" class="result-area"></div>
+                <div id="plot-container"></div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Created by <a href="https://www.linkedin.com/in/saadanjum36/" target="_blank" class="footer-link">Saad Anjum</a> | Powered by SymPy and Netlify Functions</p>
+        </footer>
+    </div>
+    
+    <script src="/js/netlify-script.js"></script>
+</body>
+</html>

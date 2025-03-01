@@ -311,22 +311,6 @@ footer {
     text-decoration: underline;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .example-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .actions {
-        flex-direction: column;
-    }
-    
-    .btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-}
-
 /* Add this CSS for the help-text section */
 .help-text {
     background-color: #f8f9fa;
@@ -356,24 +340,6 @@ footer {
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     background-color: #ffffff;
-}
-
-/* Responsive Styles */
-@media (max-width: 600px) {
-    .container {
-        padding: 0 10px;
-    }
-    
-    .section {
-        padding: 15px;
-    }
-    
-    button {
-        padding: 10px 15px;
-        font-size: 14px;
-        width: 100%;
-        margin-top: 10px;
-    }
 }
 
 /* Add this CSS for the inline examples */
@@ -460,15 +426,135 @@ footer {
     font-size: 0.8rem;
 }
 
-/* Responsive adjustments for the compact grid */
+/* Enhanced Mobile Responsiveness */
 @media (max-width: 768px) {
-    .example-grid-compact {
-        grid-template-columns: repeat(2, 1fr);
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        border-radius: 8px;
+    }
+    
+    header {
+        padding: 1.5rem 1rem;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    main {
+        padding: 1rem;
+    }
+    
+    .section {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .example-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px 16px;
+    }
+    
+    /* Make input fields easier to tap on mobile */
+    .input-group input {
+        padding: 14px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    
+    /* Adjust linearity checker layout for mobile */
+    #linearity-checker .input-group {
+        flex-direction: column;
+    }
+    
+    #linearity-checker button {
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    /* Improve example boxes for mobile */
+    .example-box {
+        padding: 1rem;
+    }
+    
+    .example-box:hover {
+        transform: none; /* Disable hover effect on mobile */
+    }
+    
+    /* Adjust footer for mobile */
+    footer {
+        padding: 1rem;
+        font-size: 0.9rem;
     }
 }
 
-@media (max-width: 576px) {
+/* Small mobile devices */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .section h2 {
+        font-size: 1.3rem;
+    }
+    
     .example-grid-compact {
         grid-template-columns: 1fr;
+    }
+    
+    /* Make buttons larger for easier tapping */
+    .btn, .use-example-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    /* Increase spacing between elements */
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Make result messages more readable */
+    .success-message, .error-message {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    
+    /* Ensure code examples are readable */
+    .examples-mini code {
+        display: inline-block;
+        margin: 3px 0;
+        padding: 5px 8px;
+    }
+}
+
+/* Ensure touch targets are at least 44px x 44px for accessibility */
+@media (max-width: 768px) {
+    .btn, .use-example-btn, input[type="text"], input[type="button"] {
+        min-height: 44px;
+    }
+    
+    /* Add more space between interactive elements */
+    .button-group {
+        gap: 10px;
+    }
+    
+    /* Improve readability of math expressions */
+    .MathJax {
+        font-size: 110% !important;
     }
 } 

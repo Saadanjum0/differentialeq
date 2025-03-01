@@ -1,17 +1,55 @@
-# Python virtual environment
-venv/
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.env
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Netlify
+.netlify/
+
+# Local Netlify folder
+.netlify
+
+# SSL certificates
+*.pem
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Flask stuff
 instance/
 .webassets-cache
 
-# Environment variables
-.env
-
 # macOS specific files
-.DS_Store
 .AppleDouble
 .LSOverride 

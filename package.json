@@ -1,0 +1,15 @@
+{
+  "name": "differential-equation-app",
+  "version": "1.0.0",
+  "description": "Differential Equation Analyzer",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p static && cp -r templates/* static/ && cp -r static/css static/ && cp -r static/js static/"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 

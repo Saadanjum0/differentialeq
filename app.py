@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import matplotlib
 # Set the matplotlib backend to Agg (non-GUI) to avoid NSWindow errors on macOS
 matplotlib.use('Agg')
@@ -7,12 +7,49 @@ import numpy as np
 import io
 import base64
 import re
+import os
+import secrets
 from sympy import symbols, diff, sympify, solve, Eq, Add, Function, sin, exp
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.utilities.lambdify import lambdify
 import argparse
+from flask_talisman import Talisman
 
 app = Flask(__name__)
+
+# Security configurations
+# Generate a strong secret key for sessions
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 minutes
+
+# Initialize Talisman for security headers
+talisman = Talisman(
+    app,
+    content_security_policy={
+        'default-src': "'self'",
+        'script-src': ["'self'", "https://polyfill.io", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+        'style-src': ["'self'", "'unsafe-inline'"],
+        'img-src': ["'self'", "data:"],
+        'font-src': ["'self'"],
+    },
+    force_https=True,  # Force HTTPS
+    strict_transport_security=True,
+    session_cookie_secure=True,
+    feature_policy={
+        'geolocation': "'none'",
+        'microphone': "'none'",
+        'camera': "'none'"
+    }
+)
+
+# In production, we'll disable this
+if not os.environ.get('PRODUCTION', False):
+    # For development only - disable in production
+    talisman.content_security_policy_report_only = True
+    talisman.force_https = False
 
 # Known cases removed as requested
 
@@ -617,15 +654,24 @@ if __name__ == '__main__':
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Run the Differential Equation Analyzer')
     parser.add_argument('--port', type=int, default=5000, help='Port to run the application on')
+    parser.add_argument('--production', action='store_true', help='Run in production mode')
     args = parser.parse_args()
     
-    try:
-        app.run(debug=True, port=args.port)
-    except OSError as e:
-        if 'Address already in use' in str(e):
-            # Try another port
-            alt_port = args.port + 1
-            print(f"Port {args.port} is in use. Trying port {alt_port}...")
-            app.run(debug=True, port=alt_port)
-        else:
-            raise e 
+    if args.production:
+        # Production settings
+        os.environ['PRODUCTION'] = 'True'
+        # In production, you would use a proper WSGI server like gunicorn
+        # This is just for testing
+        app.run(host='0.0.0.0', port=args.port, debug=False)
+    else:
+        # Development settings
+        try:
+            app.run(debug=True, port=args.port)
+        except OSError as e:
+            if 'Address already in use' in str(e):
+                # Try another port
+                alt_port = args.port + 1
+                print(f"Port {args.port} is in use. Trying port {alt_port}...")
+                app.run(debug=True, port=alt_port)
+            else:
+                raise e 

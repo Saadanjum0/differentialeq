@@ -1,91 +1,59 @@
-# Differential Equation Analyzer with Matplotlib Visualization
+# Differential Equation Analyzer
 
-A web application for analyzing differential equations with visualization capabilities. This application provides two main features:
-
-1. **Linearity Checker**: Determines if a given differential equation is linear or non-linear.
-2. **Solution Verifier**: Verifies if a given function is a solution to a differential equation and visualizes the solution using Matplotlib.
+A web application for analyzing differential equations, checking linearity, and verifying solutions.
 
 ## Features
 
-- Check if a differential equation is linear
-- Verify if a function is a solution to a differential equation
-- Visualize solutions with Matplotlib plots
-- Interactive examples to try
+- **Linearity Checker**: Determine if a differential equation is linear
+- **Solution Verifier**: Check if a function is a solution to a differential equation
+- **Visualization**: Generate plots of solutions
 
-## Technology Stack
+## Deployment on Netlify
 
-- **Backend**: Python with Flask
-- **Frontend**: HTML, CSS, JavaScript
-- **Visualization**: Matplotlib
-- **Mathematical Processing**: SymPy, NumPy
-- **Math Rendering**: MathJax
+This application is configured for deployment on Netlify using serverless functions.
 
-## Setup and Installation
+### Deployment Steps
 
-1. Clone this repository:
-   ```
-   git clone <repository-url>
-   cd differential-equation-app
-   ```
+1. Connect your GitHub repository to Netlify
+2. Configure the build settings:
+   - Build command: `npm run build`
+   - Publish directory: `static`
+3. Deploy the site
 
-2. Create a virtual environment and activate it:
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+### Local Development
 
-3. Install the required dependencies:
+To run the application locally:
+
+1. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-4. Run the application:
+2. Run the Flask application:
    ```
    python app.py
    ```
 
-5. Open your browser and navigate to:
+3. For Netlify Functions development, install the Netlify CLI:
    ```
-   http://127.0.0.1:5000/
+   npm install netlify-cli -g
    ```
 
-## How to Use
+4. Run the Netlify development server:
+   ```
+   netlify dev
+   ```
 
-### Linearity Checker
+## Technologies Used
 
-1. Enter a differential equation in the input field (e.g., `y'' + 3y' + 2y = sin(x)`).
-2. Click the "Check Linearity" button.
-3. The result will show whether the equation is linear or non-linear.
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Python with SymPy for symbolic mathematics
+- **Deployment**: Netlify with serverless functions
 
-### Solution Verifier
+## License
 
-1. Enter a differential equation in the "Differential Equation" field (e.g., `y'' + y = 0`).
-2. Enter a proposed solution in the "Proposed Solution" field (e.g., `y = sin(x)`).
-3. Click the "Verify Solution" button.
-4. The result will show whether the function is a solution to the differential equation.
-5. If the solution is valid, a plot of the solution will be displayed.
+MIT License
 
-### Examples
+## Author
 
-The application includes several examples that you can try:
-
-- **Example 1**: A linear first-order differential equation
-- **Example 2**: A linear second-order differential equation
-- **Example 3**: A non-linear differential equation
-
-Click the "Try this example" button to populate the input fields with the example.
-
-## Limitations
-
-- The application uses a simplified approach to check linearity and verify solutions.
-- For solution verification, it relies on a predefined set of known cases and basic symbolic computation.
-- Complex differential equations or solutions may not be correctly analyzed.
-- The plotting functionality uses numerical evaluation and may not work for all mathematical expressions.
-
-## Future Improvements
-
-- Implement more robust symbolic computation for solution verification
-- Add support for systems of differential equations
-- Include step-by-step solution methods
-- Provide more advanced visualization options (phase portraits, direction fields, etc.)
-- Add the ability to solve differential equations numerically 
+Created by Saad Anjum 
