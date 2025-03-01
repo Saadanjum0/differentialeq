@@ -53,3 +53,4 @@ instance/
 # macOS specific files
 .AppleDouble
 .LSOverride 
+.vercel
