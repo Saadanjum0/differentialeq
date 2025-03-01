@@ -1,0 +1,17 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Environment variables
+.env
+
+# macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride 
