@@ -17,4 +17,18 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
+
+# Add headers for CSS files
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Content-Type = "text/css"
+    Cache-Control = "public, max-age=3600"
+
+# Add headers for JS files
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=3600" 

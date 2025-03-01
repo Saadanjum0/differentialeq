@@ -11,16 +11,35 @@ mkdir -p static/js
 
 # Copy static assets with better error handling
 echo "Copying static assets..."
-if [ -d "static/css" ]; then
-  echo "Copying CSS files..."
-  find static/css -type f -name "*.css" -exec cp {} static/css/ \;
+
+# Explicitly copy CSS files with proper content type
+echo "Copying CSS files..."
+if [ -f "static/css/styles.css" ]; then
+  echo "Found styles.css, copying to deployment directory..."
+  cp static/css/styles.css static/css/styles.css
+  # Ensure proper permissions
+  chmod 644 static/css/styles.css
+  echo "CSS file copied successfully"
 else
-  echo "WARNING: No CSS directory found"
+  echo "WARNING: styles.css not found in static/css directory"
+  # Try to find it elsewhere
+  if [ -f "static/styles.css" ]; then
+    echo "Found styles.css in static directory, moving to css folder..."
+    cp static/styles.css static/css/styles.css
+    chmod 644 static/css/styles.css
+  fi
 fi
 
+# List CSS files for debugging
+echo "CSS files in static/css:"
+ls -la static/css
+
+# Copy JS files
+echo "Copying JS files..."
 if [ -d "static/js" ]; then
-  echo "Copying JS files..."
   find static/js -type f -name "*.js" -exec cp {} static/js/ \;
+  # Ensure proper permissions
+  find static/js -type f -name "*.js" -exec chmod 644 {} \;
 else
   echo "WARNING: No JS directory found"
 fi
