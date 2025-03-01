@@ -5,9 +5,17 @@ import re
 import io
 import base64
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+
+# Conditionally import matplotlib only when needed
+MATPLOTLIB_AVAILABLE = False
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    pass
+
 from sympy import symbols, Function, diff, parse_expr, sympify
 
 def normalize_equation(equation):

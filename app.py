@@ -1,19 +1,25 @@
 from flask import Flask, render_template, request, jsonify, session
-import matplotlib
-# Set the matplotlib backend to Agg (non-GUI) to avoid NSWindow errors on macOS
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import numpy as np
+# Conditionally import matplotlib only when needed
+import os
+import secrets
 import io
 import base64
 import re
-import os
-import secrets
 from sympy import symbols, diff, sympify, solve, Eq, Add, Function, sin, exp
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.utilities.lambdify import lambdify
-import argparse
-from flask_talisman import Talisman
+import numpy as np
+import sys
+
+# Check if we're running on Vercel
+IS_VERCEL = os.environ.get('VERCEL_ENV', False)
+
+# Conditionally import flask_talisman
+try:
+    from flask_talisman import Talisman
+    TALISMAN_AVAILABLE = True
+except ImportError:
+    TALISMAN_AVAILABLE = False
 
 app = Flask(__name__)
 
@@ -25,31 +31,33 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 minutes
 
-# Initialize Talisman for security headers
-talisman = Talisman(
-    app,
-    content_security_policy={
-        'default-src': "'self'",
-        'script-src': ["'self'", "https://polyfill.io", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-        'style-src': ["'self'", "'unsafe-inline'"],
-        'img-src': ["'self'", "data:"],
-        'font-src': ["'self'"],
-    },
-    force_https=True,  # Force HTTPS
-    strict_transport_security=True,
-    session_cookie_secure=True,
-    feature_policy={
-        'geolocation': "'none'",
-        'microphone': "'none'",
-        'camera': "'none'"
-    }
-)
+# Initialize Talisman for security headers if available
+if TALISMAN_AVAILABLE and not IS_VERCEL:
+    talisman = Talisman(
+        app,
+        content_security_policy={
+            'default-src': "'self'",
+            'script-src': ["'self'", "https://polyfill.io", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
+            'style-src': ["'self'", "'unsafe-inline'"],
+            'img-src': ["'self'", "data:"],
+            'font-src': ["'self'"],
+        },
+        force_https=True,  # Force HTTPS
+        strict_transport_security=True,
+        session_cookie_secure=True,
+        feature_policy={
+            'geolocation': "'none'",
+            'microphone': "'none'",
+            'camera': "'none'"
+        }
+    )
 
 # In production, we'll disable this
 if not os.environ.get('PRODUCTION', False):
     # For development only - disable in production
-    talisman.content_security_policy_report_only = True
-    talisman.force_https = False
+    if TALISMAN_AVAILABLE:
+        talisman.content_security_policy_report_only = True
+        talisman.force_https = False
 
 # Known cases removed as requested
 
@@ -175,7 +183,7 @@ def is_linear_de(equation):
     except Exception as e:
         print(f"Symbolic analysis failed: {str(e)}")
         # If symbolic analysis fails, we rely on the pattern matching already done
-        
+    
     # If we get here and no non-linearity was detected, the equation is linear
     print("Equation is linear - all checks passed")
     return True
@@ -384,7 +392,7 @@ def verify_with_sympy(de, solution):
                 'is_valid': False,
                 'reason': "Solution must be in the form 'y = f(x)'"
             }
-            
+        
         y_expr = solution.split("y = ")[1].replace("^", "**").replace("e**", "exp")
         
         try:
@@ -464,11 +472,11 @@ def verify_with_sympy(de, solution):
             reason = "Could not verify the solution at enough points."
             if invalid_point is not None:
                 reason = f"The equation is not satisfied at x = {invalid_point}. Value: {invalid_value} ≠ 0"
-                
-            return {
-                'is_valid': False,
+        
+        return {
+            'is_valid': False,
                 'reason': reason
-            }
+        }
                 
     except Exception as e:
         print(f"Error in verification process: {e}")
@@ -479,6 +487,10 @@ def verify_with_sympy(de, solution):
 
 def generate_solution_plot(de, solution):
     """Generate a plot for the solution of the differential equation"""
+    # Check if matplotlib is available
+    MATPLOTLIB_AVAILABLE = 'matplotlib' in sys.modules
+    
+    # Default base64 image to return if plotting fails or matplotlib is not available
     try:
         # Extract the solution function from the input
         if "y = " in solution:
@@ -504,6 +516,11 @@ def generate_solution_plot(de, solution):
             print(f"Parsed solution for plotting: {y_sym}")
         except Exception as e:
             print(f"Error parsing solution for plotting: {e}")
+            
+            # Check if matplotlib is available
+            if not 'matplotlib' in sys.modules:
+                return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
+                
             # Create a simplified error plot
             plt.figure(figsize=(8, 5))
             plt.text(0.5, 0.5, f"Could not parse: {y_expr}\nError: {str(e)}", 
@@ -525,6 +542,11 @@ def generate_solution_plot(de, solution):
             y_func = lambdify(x_sym, y_sym, modules=['numpy'])
         except Exception as e:
             print(f"Error creating numerical function: {e}")
+            
+            # Check if matplotlib is available
+            if not 'matplotlib' in sys.modules:
+                return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
+                
             # Create a simplified error plot
             plt.figure(figsize=(8, 5))
             plt.text(0.5, 0.5, f"Could not create plot function: {str(e)}", 
@@ -544,6 +566,10 @@ def generate_solution_plot(de, solution):
         # Generate x values for plotting
         x = np.linspace(-5, 5, 500)
         
+        # Check if matplotlib is available
+        if not 'matplotlib' in sys.modules:
+            return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
+            
         try:
             # Try to evaluate the function
             y = y_func(x)
@@ -635,6 +661,10 @@ def generate_solution_plot(de, solution):
     except Exception as e:
         print(f"Error generating plot: {e}")
         
+        # Check if matplotlib is available
+        if not 'matplotlib' in sys.modules:
+            return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
+            
         # Create a fallback error plot
         plt.figure(figsize=(8, 5))
         plt.text(0.5, 0.5, f"Error generating plot: {str(e)}", 
@@ -650,28 +680,23 @@ def generate_solution_plot(de, solution):
         
         return f"data:image/png;base64,{plot_url}"
 
+# Add this at the end of the file
+# Handler for Vercel serverless function
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    if path == "":
+        return render_template('index.html')
+    return app.send_static_file(path)
+
+# For Vercel deployment
 if __name__ == '__main__':
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description='Run the Differential Equation Analyzer')
-    parser.add_argument('--port', type=int, default=5000, help='Port to run the application on')
-    parser.add_argument('--production', action='store_true', help='Run in production mode')
-    args = parser.parse_args()
-    
-    if args.production:
-        # Production settings
-        os.environ['PRODUCTION'] = 'True'
-        # In production, you would use a proper WSGI server like gunicorn
-        # This is just for testing
-        app.run(host='0.0.0.0', port=args.port, debug=False)
+    # Check if running on Vercel
+    if os.environ.get('VERCEL_ENV'):
+        # In Vercel, we don't need to run the app
+        # It will be handled by the serverless function
+        pass
     else:
-        # Development settings
-        try:
-            app.run(debug=True, port=args.port)
-        except OSError as e:
-            if 'Address already in use' in str(e):
-                # Try another port
-                alt_port = args.port + 1
-                print(f"Port {args.port} is in use. Trying port {alt_port}...")
-                app.run(debug=True, port=alt_port)
-            else:
-                raise e 
+        # For local development
+        port = int(os.environ.get('PORT', 5001))
+        app.run(debug=True, host='0.0.0.0', port=port) 
