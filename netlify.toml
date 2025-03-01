@@ -5,8 +5,9 @@
 [build.environment]
   PYTHON_VERSION = "3.9"
   NODE_VERSION = "16"
-  MISE_PYTHON_COMPILE = "false"
-  MISE_VERBOSE = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-python"
 
 # Simplified redirects
 [[redirects]]

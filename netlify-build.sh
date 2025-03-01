@@ -12,10 +12,13 @@ echo "Directory contents: $(ls -la)"
 
 # Set up Python environment
 echo "Setting up Python environment..."
-mise settings set python.compile false
-mise use python@${PYTHON_VERSION}
-python --version
-which python
+python3 --version
+which python3
+
+# Create and activate virtual environment
+echo "Creating virtual environment..."
+python3 -m venv .venv
+source .venv/bin/activate
 
 # Install system dependencies for matplotlib
 echo "Installing system dependencies for matplotlib..."
