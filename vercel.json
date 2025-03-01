@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "./build.sh",
+  "buildCommand": "./vercel-build.sh",
   "builds": [
     {
       "src": "api/index.py",
@@ -49,8 +49,7 @@
     }
   ],
   "env": {
-    "VERCEL_ENV": "true",
-    "PRODUCTION": "true",
-    "MATPLOTLIB_USE": "Agg"
+    "PYTHONPATH": "/vercel/path0",
+    "FLASK_ENV": "production"
   }
 } 
