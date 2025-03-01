@@ -4,16 +4,9 @@
 
 [build.environment]
   PYTHON_VERSION = "3.9"
+  NODE_VERSION = "16"
 
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
+# Simplified redirects
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -21,14 +14,14 @@
 
 # Add headers for CSS files
 [[headers]]
-  for = "/css/*"
+  for = "/*.css"
   [headers.values]
     Content-Type = "text/css"
     Cache-Control = "public, max-age=3600"
 
 # Add headers for JS files
 [[headers]]
-  for = "/js/*"
+  for = "/*.js"
   [headers.values]
     Content-Type = "application/javascript"
     Cache-Control = "public, max-age=3600" 

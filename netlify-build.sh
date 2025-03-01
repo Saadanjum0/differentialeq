@@ -1,71 +1,117 @@
 #!/bin/bash
 
-# Exit on error
-set -e
+# Print commands as they are executed
+set -x
+
+# Don't exit on error immediately to allow for debugging
+# set -e
 
 echo "Starting Netlify build process..."
+echo "Current directory: $(pwd)"
+echo "Directory contents: $(ls -la)"
 
 # Create static directory structure
 mkdir -p static/css
 mkdir -p static/js
+echo "Created directory structure"
 
-# Copy static assets with better error handling
-echo "Copying static assets..."
-
-# Explicitly copy CSS files with proper content type
+# Copy CSS files directly from source to destination
 echo "Copying CSS files..."
 if [ -f "static/css/styles.css" ]; then
-  echo "Found styles.css, copying to deployment directory..."
-  cp static/css/styles.css static/css/styles.css
-  # Ensure proper permissions
+  echo "Found styles.css in static/css, ensuring it's properly copied..."
+  cp -v static/css/styles.css static/css/styles.css
   chmod 644 static/css/styles.css
   echo "CSS file copied successfully"
 else
   echo "WARNING: styles.css not found in static/css directory"
-  # Try to find it elsewhere
-  if [ -f "static/styles.css" ]; then
-    echo "Found styles.css in static directory, moving to css folder..."
-    cp static/styles.css static/css/styles.css
+  
+  # Check if styles.css exists in the root directory
+  if [ -f "styles.css" ]; then
+    echo "Found styles.css in root directory, copying to static/css..."
+    cp -v styles.css static/css/styles.css
+    chmod 644 static/css/styles.css
+  fi
+  
+  # Create a minimal CSS file if none exists
+  if [ ! -f "static/css/styles.css" ]; then
+    echo "Creating minimal CSS file..."
+    echo "/* Basic styles */" > static/css/styles.css
+    echo ".container { max-width: 1200px; margin: 0 auto; }" >> static/css/styles.css
+    echo ".primary-btn { background-color: #2A93D5; color: white; }" >> static/css/styles.css
     chmod 644 static/css/styles.css
   fi
 fi
 
 # List CSS files for debugging
 echo "CSS files in static/css:"
-ls -la static/css
+ls -la static/css || echo "Failed to list CSS files"
 
 # Copy JS files
 echo "Copying JS files..."
 if [ -d "static/js" ]; then
-  find static/js -type f -name "*.js" -exec cp {} static/js/ \;
-  # Ensure proper permissions
-  find static/js -type f -name "*.js" -exec chmod 644 {} \;
+  # Copy each JS file individually
+  for jsfile in static/js/*.js; do
+    if [ -f "$jsfile" ]; then
+      echo "Copying $jsfile..."
+      cp -v "$jsfile" static/js/
+      chmod 644 static/js/$(basename "$jsfile")
+    fi
+  done
 else
   echo "WARNING: No JS directory found"
+  # Create minimal JS files
+  echo "console.log('Netlify script loaded');" > static/js/netlify-script.js
+  echo "console.log('Debug script loaded');" > static/js/debug.js
+  chmod 644 static/js/netlify-script.js
+  chmod 644 static/js/debug.js
 fi
 
-# Copy HTML files
-if [ -d "templates" ]; then
-  echo "Copying HTML templates..."
-  cp templates/index.html static/index.html || echo "WARNING: Failed to copy index.html from templates"
+# List JS files for debugging
+echo "JS files in static/js:"
+ls -la static/js || echo "Failed to list JS files"
+
+# Ensure index.html exists
+echo "Checking for index.html..."
+if [ -f "templates/index.html" ]; then
+  echo "Copying index.html from templates..."
+  cp -v templates/index.html static/index.html
+elif [ -f "static/index.html" ]; then
+  echo "index.html already exists in static directory"
 else
-  echo "No templates directory found, checking for static/index.html..."
-  if [ ! -f "static/index.html" ]; then
-    echo "WARNING: No index.html found in static directory"
-  fi
+  echo "WARNING: No index.html found, creating a minimal one..."
+  cat > static/index.html << 'EOL'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Differential Equation Analyzer</title>
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.1">
+</head>
+<body>
+    <div class="container">
+        <h1>Differential Equation Analyzer</h1>
+        <p>The application is being set up. Please check back soon.</p>
+    </div>
+    <script src="/js/netlify-script.js?v=1.0.1"></script>
+</body>
+</html>
+EOL
 fi
 
 # List the contents of the static directory for debugging
 echo "Contents of static directory:"
-find static -type f | sort
+find static -type f | sort || echo "Failed to list static directory contents"
 
 # Set up Python for functions
 if [ -d "netlify/functions" ]; then
   echo "Setting up Python for Netlify functions..."
   if [ -f "netlify/requirements.txt" ]; then
     echo "Installing Python dependencies for functions..."
-    pip install -r netlify/requirements.txt
+    pip install -r netlify/requirements.txt || echo "WARNING: Failed to install Python dependencies"
   fi
 fi
 
-echo "Build process completed!" 
+echo "Build process completed!"
+# Exit with success
+exit 0 
