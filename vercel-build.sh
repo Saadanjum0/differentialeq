@@ -8,6 +8,12 @@ echo "Starting Vercel build process..."
 # Ensure we're using Python 3.9
 export PYTHON_VERSION=3.9
 
+# Check and install distutils if missing
+if ! python -c "import distutils" &> /dev/null; then
+  echo "Installing distutils..."
+  apt-get update -y && apt-get install -y python3-distutils
+fi
+
 # Install dependencies
 pip install -r requirements.txt
 
