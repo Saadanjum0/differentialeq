@@ -52,36 +52,105 @@ mkdir -p static/css
 mkdir -p static/js
 echo "Created directory structure"
 
-# Copy CSS files directly from source to destination
+# Copy CSS files
 echo "Copying CSS files..."
 if [ -f "static/css/styles.css" ]; then
-  echo "Found styles.css in static/css, ensuring it's properly copied..."
-  cp -v static/css/styles.css static/css/styles.css
-  chmod 644 static/css/styles.css
-  echo "CSS file copied successfully"
+    echo "Found styles.css in static/css..."
+    cp -v static/css/styles.css static/css/styles.css.bak
+    chmod 644 static/css/styles.css.bak
+elif [ -f "templates/static/css/styles.css" ]; then
+    echo "Found styles.css in templates/static/css..."
+    cp -v templates/static/css/styles.css static/css/styles.css
+    chmod 644 static/css/styles.css
 else
-  echo "WARNING: styles.css not found in static/css directory"
-  
-  # Check if styles.css exists in the root directory
-  if [ -f "styles.css" ]; then
-    echo "Found styles.css in root directory, copying to static/css..."
-    cp -v styles.css static/css/styles.css
+    echo "Creating styles.css with full styles..."
+    cat > static/css/styles.css << 'EOL'
+/* Modern CSS reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #2A93D5, #3454D1);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+
+.primary-btn {
+    background-color: #2A93D5;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.primary-btn:hover {
+    background-color: #2484c0;
+}
+
+.input-group {
+    margin-bottom: 1.2rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.example-box {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.use-example-btn {
+    background-color: #e9ecef;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #495057;
+    cursor: pointer;
+    margin-top: 10px;
+}
+EOL
     chmod 644 static/css/styles.css
-  fi
-  
-  # Create a minimal CSS file if none exists
-  if [ ! -f "static/css/styles.css" ]; then
-    echo "Creating minimal CSS file..."
-    echo "/* Basic styles */" > static/css/styles.css
-    echo ".container { max-width: 1200px; margin: 0 auto; }" >> static/css/styles.css
-    echo ".primary-btn { background-color: #2A93D5; color: white; }" >> static/css/styles.css
-    chmod 644 static/css/styles.css
-  fi
 fi
 
-# List CSS files for debugging
+# Verify CSS file exists and has content
+if [ ! -s "static/css/styles.css" ]; then
+    echo "ERROR: styles.css is empty or missing!"
+    exit 1
+fi
+
 echo "CSS files in static/css:"
-ls -la static/css || echo "Failed to list CSS files"
+ls -la static/css
 
 # Copy JS files
 echo "Copying JS files..."
