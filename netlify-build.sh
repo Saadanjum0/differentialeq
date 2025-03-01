@@ -10,6 +10,18 @@ echo "Starting Netlify build process..."
 echo "Current directory: $(pwd)"
 echo "Directory contents: $(ls -la)"
 
+# Set up Python version using pyenv
+echo "Setting up Python ${PYTHON_VERSION}..."
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if ! command -v pyenv &> /dev/null; then
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+fi
+eval "$(pyenv init -)"
+pyenv install ${PYTHON_VERSION} || echo "Python ${PYTHON_VERSION} might already be installed"
+pyenv global ${PYTHON_VERSION}
+python --version
+
 # Install system dependencies for matplotlib
 echo "Installing system dependencies for matplotlib..."
 if [ -x "$(command -v apt-get)" ]; then
@@ -21,6 +33,7 @@ fi
 
 # Install Python dependencies
 echo "Installing Python dependencies..."
+python -m pip install --upgrade pip
 pip install -r requirements.txt || echo "WARNING: Failed to install Python dependencies"
 
 # Verify matplotlib is installed
