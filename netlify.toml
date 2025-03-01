@@ -3,8 +3,10 @@
   command = "bash ./netlify-build.sh"
 
 [build.environment]
-  PYTHON_VERSION = "3.9.16"
+  PYTHON_VERSION = "3.9"
   NODE_VERSION = "16"
+  MISE_PYTHON_COMPILE = "false"
+  MISE_VERBOSE = "1"
 
 # Simplified redirects
 [[redirects]]

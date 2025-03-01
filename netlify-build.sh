@@ -10,17 +10,12 @@ echo "Starting Netlify build process..."
 echo "Current directory: $(pwd)"
 echo "Directory contents: $(ls -la)"
 
-# Set up Python version using pyenv
-echo "Setting up Python ${PYTHON_VERSION}..."
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if ! command -v pyenv &> /dev/null; then
-    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-fi
-eval "$(pyenv init -)"
-pyenv install ${PYTHON_VERSION} || echo "Python ${PYTHON_VERSION} might already be installed"
-pyenv global ${PYTHON_VERSION}
+# Set up Python environment
+echo "Setting up Python environment..."
+mise settings set python.compile false
+mise use python@${PYTHON_VERSION}
 python --version
+which python
 
 # Install system dependencies for matplotlib
 echo "Installing system dependencies for matplotlib..."
@@ -34,7 +29,7 @@ fi
 # Install Python dependencies
 echo "Installing Python dependencies..."
 python -m pip install --upgrade pip
-pip install -r requirements.txt || echo "WARNING: Failed to install Python dependencies"
+pip install --no-cache-dir -r requirements.txt
 
 # Verify matplotlib is installed
 python -c "import matplotlib; print(f'Matplotlib version: {matplotlib.__version__}')" || echo "WARNING: Matplotlib not installed correctly"
@@ -137,7 +132,7 @@ if [ -d "netlify/functions" ]; then
   echo "Setting up Python for Netlify functions..."
   if [ -f "netlify/requirements.txt" ]; then
     echo "Installing Python dependencies for functions..."
-    pip install -r netlify/requirements.txt || echo "WARNING: Failed to install Python dependencies"
+    pip install --no-cache-dir -r netlify/requirements.txt || echo "WARNING: Failed to install Python dependencies"
   fi
 fi
 
