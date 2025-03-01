@@ -10,6 +10,22 @@ echo "Starting Netlify build process..."
 echo "Current directory: $(pwd)"
 echo "Directory contents: $(ls -la)"
 
+# Install system dependencies for matplotlib
+echo "Installing system dependencies for matplotlib..."
+if [ -x "$(command -v apt-get)" ]; then
+  apt-get update -y || true
+  apt-get install -y libfreetype6-dev libpng-dev || true
+elif [ -x "$(command -v yum)" ]; then
+  yum install -y freetype-devel libpng-devel || true
+fi
+
+# Install Python dependencies
+echo "Installing Python dependencies..."
+pip install -r requirements.txt || echo "WARNING: Failed to install Python dependencies"
+
+# Verify matplotlib is installed
+python -c "import matplotlib; print(f'Matplotlib version: {matplotlib.__version__}')" || echo "WARNING: Matplotlib not installed correctly"
+
 # Create static directory structure
 mkdir -p static/css
 mkdir -p static/js

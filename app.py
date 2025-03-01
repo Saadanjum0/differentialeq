@@ -1,15 +1,33 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 # Conditionally import matplotlib only when needed
 import os
 import secrets
 import io
 import base64
 import re
+import logging
+from logging.handlers import RotatingFileHandler
 from sympy import symbols, diff, sympify, solve, Eq, Add, Function, sin, exp
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.utilities.lambdify import lambdify
 import numpy as np
 import sys
+from dotenv import load_dotenv
+import datetime
+from logging_config import setup_logging, log_error, log_request
+
+# Import matplotlib early to ensure it's available
+try:
+    import matplotlib
+    matplotlib.use('Agg')  # Use non-interactive backend
+    import matplotlib.pyplot as plt
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
+    print("WARNING: Matplotlib not available. Plotting functionality will be limited.")
+
+# Load environment variables
+load_dotenv()
 
 # Check if we're running on Vercel
 IS_VERCEL = os.environ.get('VERCEL_ENV', False)
@@ -21,7 +39,39 @@ try:
 except ImportError:
     TALISMAN_AVAILABLE = False
 
+# Conditionally import flask_limiter
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+    LIMITER_AVAILABLE = True
+except ImportError:
+    LIMITER_AVAILABLE = False
+
+# Conditionally import flask_cors
+try:
+    from flask_cors import CORS
+    CORS_AVAILABLE = True
+except ImportError:
+    CORS_AVAILABLE = False
+
 app = Flask(__name__)
+
+# Set up logging
+setup_logging(app)
+
+# Configure logging
+if not IS_VERCEL:  # Skip file logging on serverless environments
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/app.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+
+app.logger.setLevel(logging.INFO)
+app.logger.info('Differential Equation Analyzer startup')
 
 # Security configurations
 # Generate a strong secret key for sessions
@@ -48,16 +98,21 @@ if TALISMAN_AVAILABLE and not IS_VERCEL:
         feature_policy={
             'geolocation': "'none'",
             'microphone': "'none'",
-            'camera': "'none'"
         }
     )
 
-# In production, we'll disable this
-if not os.environ.get('PRODUCTION', False):
-    # For development only - disable in production
-    if TALISMAN_AVAILABLE:
-        talisman.content_security_policy_report_only = True
-        talisman.force_https = False
+# Initialize CORS if available
+if CORS_AVAILABLE:
+    CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Initialize rate limiter if available
+if LIMITER_AVAILABLE:
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+        default_limits=["200 per day", "50 per hour"],
+        storage_uri=os.environ.get("REDIS_URL", "memory://")
+    )
 
 # Known cases removed as requested
 
@@ -488,7 +543,8 @@ def verify_with_sympy(de, solution):
 def generate_solution_plot(de, solution):
     """Generate a plot for the solution of the differential equation"""
     # Check if matplotlib is available
-    MATPLOTLIB_AVAILABLE = 'matplotlib' in sys.modules
+    if not MATPLOTLIB_AVAILABLE:
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
     
     # Default base64 image to return if plotting fails or matplotlib is not available
     try:
@@ -517,10 +573,6 @@ def generate_solution_plot(de, solution):
         except Exception as e:
             print(f"Error parsing solution for plotting: {e}")
             
-            # Check if matplotlib is available
-            if not 'matplotlib' in sys.modules:
-                return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
-                
             # Create a simplified error plot
             plt.figure(figsize=(8, 5))
             plt.text(0.5, 0.5, f"Could not parse: {y_expr}\nError: {str(e)}", 
@@ -543,10 +595,6 @@ def generate_solution_plot(de, solution):
         except Exception as e:
             print(f"Error creating numerical function: {e}")
             
-            # Check if matplotlib is available
-            if not 'matplotlib' in sys.modules:
-                return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
-                
             # Create a simplified error plot
             plt.figure(figsize=(8, 5))
             plt.text(0.5, 0.5, f"Could not create plot function: {str(e)}", 
@@ -566,10 +614,6 @@ def generate_solution_plot(de, solution):
         # Generate x values for plotting
         x = np.linspace(-5, 5, 500)
         
-        # Check if matplotlib is available
-        if not 'matplotlib' in sys.modules:
-            return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
-            
         try:
             # Try to evaluate the function
             y = y_func(x)
@@ -649,7 +693,7 @@ def generate_solution_plot(de, solution):
                     transform=plt.gca().transAxes, fontsize=12)
             plt.tight_layout()
             
-            # Save the error message plot
+            # Save the error plot
             buf = io.BytesIO()
             plt.savefig(buf, format='png', dpi=100)
             buf.seek(0)
@@ -661,24 +705,62 @@ def generate_solution_plot(de, solution):
     except Exception as e:
         print(f"Error generating plot: {e}")
         
-        # Check if matplotlib is available
-        if not 'matplotlib' in sys.modules:
-            return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
-            
         # Create a fallback error plot
-        plt.figure(figsize=(8, 5))
-        plt.text(0.5, 0.5, f"Error generating plot: {str(e)}", 
-                horizontalalignment='center', verticalalignment='center',
-                transform=plt.gca().transAxes, fontsize=12)
-        plt.tight_layout()
+        if MATPLOTLIB_AVAILABLE:
+            plt.figure(figsize=(8, 5))
+            plt.text(0.5, 0.5, f"Error generating plot: {str(e)}", 
+                    horizontalalignment='center', verticalalignment='center',
+                    transform=plt.gca().transAxes, fontsize=12)
+            plt.tight_layout()
+            
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', dpi=100)
+            buf.seek(0)
+            plot_url = base64.b64encode(buf.getvalue()).decode('utf-8')
+            plt.close()
+            
+            return f"data:image/png;base64,{plot_url}"
         
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=100)
-        buf.seek(0)
-        plot_url = base64.b64encode(buf.getvalue()).decode('utf-8')
-        plt.close()
-        
-        return f"data:image/png;base64,{plot_url}"
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC"
+
+# Health check endpoint
+@app.route('/health')
+def health_check():
+    return jsonify({
+        'status': 'healthy',
+        'version': '1.0.0',
+        'timestamp': datetime.datetime.utcnow().isoformat() + 'Z'
+    })
+
+# Request logging middleware
+@app.before_request
+def before_request():
+    app.logger.info(f"Incoming {request.method} request to {request.url}")
+
+@app.after_request
+def after_request(response):
+    log_request(app, request, response)
+    return response
+
+# Add error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    log_error(app, error, "404 Not Found")
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    log_error(app, error, "500 Internal Server Error")
+    return render_template('errors/500.html'), 500
+
+@app.errorhandler(Exception)
+def unhandled_exception(error):
+    log_error(app, error, "Unhandled Exception")
+    return render_template('errors/error.html',
+                         error_code="500",
+                         error_title="Internal Server Error",
+                         error_description="An unexpected error occurred.",
+                         error_color="#dc3545"), 500
 
 # Add this at the end of the file
 # Handler for Vercel serverless function

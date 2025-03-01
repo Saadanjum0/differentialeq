@@ -7,7 +7,7 @@
       "use": "@vercel/python",
       "config": {
         "runtime": "python3.9",
-        "maxLambdaSize": "15mb"
+        "maxLambdaSize": "50mb"
       }
     },
     {
@@ -50,6 +50,7 @@
   ],
   "env": {
     "VERCEL_ENV": "true",
-    "PRODUCTION": "true"
+    "PRODUCTION": "true",
+    "MATPLOTLIB_USE": "Agg"
   }
 } 

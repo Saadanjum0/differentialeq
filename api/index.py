@@ -1,4 +1,9 @@
 from flask import Flask
+# Initialize matplotlib with Agg backend before importing app
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for serverless environment
+
+# Now import the app
 from app import app
 
 # This file is used by Vercel to handle serverless functions
@@ -26,6 +31,7 @@ def handler(request, context):
         'SERVER_NAME': 'vercel-serverless',
         'SERVER_PORT': '443',
         'HTTP_HOST': request.headers.get('host', 'vercel-serverless'),
+        'VERCEL_ENV': 'true',  # Set environment variable for Vercel
     }
     
     # Add all HTTP headers
