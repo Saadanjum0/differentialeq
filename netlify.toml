@@ -3,11 +3,10 @@
   command = "bash ./netlify-build.sh"
 
 [build.environment]
-  PYTHON_VERSION = "3.9"
   NODE_VERSION = "16"
 
-[[plugins]]
-  package = "@netlify/plugin-python"
+[functions]
+  directory = "netlify/functions"
 
 # Simplified redirects
 [[redirects]]

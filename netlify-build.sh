@@ -3,31 +3,41 @@
 # Print commands as they are executed
 set -x
 
-# Don't exit on error immediately to allow for debugging
-# set -e
-
 echo "Starting Netlify build process..."
 echo "Current directory: $(pwd)"
 echo "Directory contents: $(ls -la)"
 
-# Set up Python environment
-echo "Setting up Python environment..."
-python3 --version
-which python3
+# Ensure we're using the system Python
+export PATH="/usr/bin:$PATH"
+unset PYTHONPATH
+unset PYTHONHOME
 
-# Create and activate virtual environment
-echo "Creating virtual environment..."
-python3 -m venv .venv
-source .venv/bin/activate
+# Check Python version
+echo "Checking Python version..."
+/usr/bin/python3 --version || true
+/usr/bin/python --version || true
+
+# Install pip if needed
+echo "Installing pip..."
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+/usr/bin/python3 get-pip.py --user || /usr/bin/python get-pip.py --user
+
+# Add local bin to PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 # Install system dependencies for matplotlib
 echo "Installing system dependencies for matplotlib..."
 if [ -x "$(command -v apt-get)" ]; then
-  apt-get update -y || true
-  apt-get install -y libfreetype6-dev libpng-dev || true
+  sudo apt-get update -y || true
+  sudo apt-get install -y python3-dev python3-pip python3-venv libfreetype6-dev libpng-dev || true
 elif [ -x "$(command -v yum)" ]; then
-  yum install -y freetype-devel libpng-devel || true
+  sudo yum install -y python3-devel freetype-devel libpng-devel || true
 fi
+
+# Create and activate virtual environment
+echo "Creating virtual environment..."
+/usr/bin/python3 -m venv .venv || /usr/bin/python -m venv .venv
+source .venv/bin/activate
 
 # Install Python dependencies
 echo "Installing Python dependencies..."
