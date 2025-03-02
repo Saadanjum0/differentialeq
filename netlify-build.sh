@@ -4,31 +4,37 @@ set -e
 # Print versions for debugging
 echo "Node version: $(node -v)"
 echo "NPM version: $(npm -v)"
-echo "Python version check:"
+echo "System Python version:"
 python --version || echo "Python not found in PATH"
 
-# Ensure Python 3.9 is available
-if ! command -v python3.9 &> /dev/null; then
-    echo "Python 3.9 not found, checking for python3..."
-    if command -v python3 &> /dev/null; then
-        echo "Using python3: $(python3 --version)"
-        # Create symlink if needed
-        ln -sf $(which python3) python3.9 || echo "Could not create symlink"
-    else
-        echo "WARNING: Python 3.9 not available. Using system Python: $(python --version)"
+# Try to find any Python 3 version
+echo "Looking for Python 3..."
+PYTHON_CMD=""
+
+# Check for various Python commands in order of preference
+for cmd in python3.9 python3.8 python3.7 python3 python; do
+    if command -v $cmd &> /dev/null; then
+        version=$($cmd --version 2>&1)
+        echo "Found $cmd: $version"
+        
+        # Check if it's Python 3
+        if [[ $version == *"Python 3"* ]]; then
+            PYTHON_CMD=$cmd
+            echo "Using $PYTHON_CMD"
+            break
+        else
+            echo "$cmd is not Python 3, continuing search..."
+        fi
     fi
-else
-    echo "Found Python 3.9: $(python3.9 --version)"
+done
+
+# If no Python 3 found, use system Python as fallback
+if [ -z "$PYTHON_CMD" ]; then
+    echo "WARNING: No Python 3 found. Using system Python as fallback."
+    PYTHON_CMD="python"
 fi
 
-# Use available Python
-PYTHON_CMD="python"
-if command -v python3.9 &> /dev/null; then
-    PYTHON_CMD="python3.9"
-elif command -v python3 &> /dev/null; then
-    PYTHON_CMD="python3"
-fi
-echo "Using Python command: $PYTHON_CMD ($(${PYTHON_CMD} --version 2>&1))"
+echo "Selected Python command: $PYTHON_CMD ($(${PYTHON_CMD} --version 2>&1))"
 
 # Install npm dependencies with legacy peer deps flag
 echo "Installing npm dependencies..."
@@ -40,7 +46,7 @@ mkdir -p static/js
 
 # Install Python dependencies
 echo "Installing Python dependencies..."
-${PYTHON_CMD} -m pip install --upgrade pip
+${PYTHON_CMD} -m pip install --upgrade pip || echo "Failed to upgrade pip, continuing with existing version"
 
 # Use netlify-requirements.txt if it exists, otherwise fall back to requirements.txt
 if [ -f "netlify-requirements.txt" ]; then
@@ -54,7 +60,7 @@ fi
 # Copy static files
 echo "Copying static files..."
 if [ -d "static" ]; then
-  cp -r static/* static/
+  cp -r static/* static/ || echo "Warning: Could not copy static files (possibly due to copying to itself)"
 fi
 
 # Ensure CSS file exists

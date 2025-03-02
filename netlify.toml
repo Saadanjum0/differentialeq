@@ -3,7 +3,7 @@
   publish = "static"
 
 [build.environment]
-  PYTHON_VERSION = "3.9.18"
+  PYTHON_VERSION = "3.9"
   NODE_VERSION = "16"
   NPM_VERSION = "8"
   NPM_FLAGS = "--legacy-peer-deps"
