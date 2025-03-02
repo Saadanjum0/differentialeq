@@ -54,3 +54,4 @@ instance/
 .AppleDouble
 .LSOverride 
 .vercel
+netlify-deploy.zip
