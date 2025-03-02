@@ -121,7 +121,7 @@ if [ -f "templates/index.html" ]; then
   
   # Update CSS path in the HTML file
   sed -i.bak 's|href="/static/css/styles.css|href="css/styles.css|g' static/index.html
-  sed -i.bak 's|src="{{ url_for(\'static\', filename=\'js/script.js\') }}"|src="js/script.js"|g' static/index.html
+  sed -i.bak "s|src=\"{{ url_for('static', filename='js/script.js') }}\"|src=\"js/script.js\"|g" static/index.html
   rm -f static/index.html.bak
 else
   echo "Error: templates/index.html not found!"
