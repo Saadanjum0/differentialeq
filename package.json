@@ -1,0 +1,32 @@
+{
+  "name": "differential-equation-app",
+  "version": "1.0.0",
+  "description": "A web application for analyzing, solving, and visualizing differential equations",
+  "main": "index.js",
+  "scripts": {
+    "start": "python app.py",
+    "build": "bash netlify-build.sh"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "peerDependencies": {
+    "@testing-library/react": "^11.2.2",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^11.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Saadanjum0/differentialeq.git"
+  },
+  "author": "Saad Anjum",
+  "license": "MIT"
+} 
