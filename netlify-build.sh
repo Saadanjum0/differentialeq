@@ -4,7 +4,31 @@ set -e
 # Print versions for debugging
 echo "Node version: $(node -v)"
 echo "NPM version: $(npm -v)"
-echo "Python version: $(python -v 2>&1)"
+echo "Python version check:"
+python --version || echo "Python not found in PATH"
+
+# Ensure Python 3.9 is available
+if ! command -v python3.9 &> /dev/null; then
+    echo "Python 3.9 not found, checking for python3..."
+    if command -v python3 &> /dev/null; then
+        echo "Using python3: $(python3 --version)"
+        # Create symlink if needed
+        ln -sf $(which python3) python3.9 || echo "Could not create symlink"
+    else
+        echo "WARNING: Python 3.9 not available. Using system Python: $(python --version)"
+    fi
+else
+    echo "Found Python 3.9: $(python3.9 --version)"
+fi
+
+# Use available Python
+PYTHON_CMD="python"
+if command -v python3.9 &> /dev/null; then
+    PYTHON_CMD="python3.9"
+elif command -v python3 &> /dev/null; then
+    PYTHON_CMD="python3"
+fi
+echo "Using Python command: $PYTHON_CMD ($(${PYTHON_CMD} --version 2>&1))"
 
 # Install npm dependencies with legacy peer deps flag
 echo "Installing npm dependencies..."
@@ -16,7 +40,16 @@ mkdir -p static/js
 
 # Install Python dependencies
 echo "Installing Python dependencies..."
-pip install -r requirements.txt
+${PYTHON_CMD} -m pip install --upgrade pip
+
+# Use netlify-requirements.txt if it exists, otherwise fall back to requirements.txt
+if [ -f "netlify-requirements.txt" ]; then
+    echo "Using netlify-requirements.txt for dependencies..."
+    ${PYTHON_CMD} -m pip install -r netlify-requirements.txt
+else
+    echo "Using requirements.txt for dependencies..."
+    ${PYTHON_CMD} -m pip install -r requirements.txt
+fi
 
 # Copy static files
 echo "Copying static files..."
