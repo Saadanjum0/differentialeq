@@ -1,0 +1,17 @@
+version: 1
+
+build:
+  environment:
+    PYTHON_VERSION: 3.9.18
+    NODE_VERSION: 16
+    NPM_VERSION: 8
+    NPM_FLAGS: --legacy-peer-deps
+  
+  command: bash netlify-build.sh
+  publish: static
+
+  # Configuration for mise tool
+  tools:
+    python: 3.9.18
+    node: 16
+    npm: 8 

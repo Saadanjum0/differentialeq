@@ -6,27 +6,34 @@ echo "Node version: $(node -v)"
 echo "NPM version: $(npm -v)"
 echo "System Python version:"
 python --version || echo "Python not found in PATH"
+python3 --version || echo "Python3 not found in PATH"
 
 # Try to find any Python 3 version
 echo "Looking for Python 3..."
 PYTHON_CMD=""
 
-# Check for various Python commands in order of preference
-for cmd in python3.9 python3.8 python3.7 python3 python; do
-    if command -v $cmd &> /dev/null; then
-        version=$($cmd --version 2>&1)
-        echo "Found $cmd: $version"
-        
-        # Check if it's Python 3
-        if [[ $version == *"Python 3"* ]]; then
-            PYTHON_CMD=$cmd
-            echo "Using $PYTHON_CMD"
-            break
-        else
-            echo "$cmd is not Python 3, continuing search..."
+# First check if mise is available (Netlify's new tool)
+if command -v mise &> /dev/null; then
+    echo "mise is available, using system Python"
+    PYTHON_CMD="python"
+else
+    # Check for various Python commands in order of preference
+    for cmd in python3.9 python3 python; do
+        if command -v $cmd &> /dev/null; then
+            version=$($cmd --version 2>&1)
+            echo "Found $cmd: $version"
+            
+            # Check if it's Python 3
+            if [[ $version == *"Python 3"* ]]; then
+                PYTHON_CMD=$cmd
+                echo "Using $PYTHON_CMD"
+                break
+            else
+                echo "$cmd is not Python 3, continuing search..."
+            fi
         fi
-    fi
-done
+    done
+fi
 
 # If no Python 3 found, use system Python as fallback
 if [ -z "$PYTHON_CMD" ]; then
