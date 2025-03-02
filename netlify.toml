@@ -1,11 +1,11 @@
 [build]
   command = "bash netlify-build.sh"
   publish = "static"
-  environment = { NODE_VERSION = "16", NPM_VERSION = "8", PYTHON_VERSION = "3.9" }
 
 [build.environment]
   PYTHON_VERSION = "3.9"
   NODE_VERSION = "16"
+  NPM_VERSION = "8"
   NPM_FLAGS = "--legacy-peer-deps"
 
 [[redirects]]
