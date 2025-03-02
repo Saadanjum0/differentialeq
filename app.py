@@ -108,10 +108,11 @@ if CORS_AVAILABLE:
 # Initialize rate limiter if available
 if LIMITER_AVAILABLE:
     limiter = Limiter(
-        get_remote_address,
         app=app,
+        key_func=get_remote_address,
         default_limits=["200 per day", "50 per hour"],
-        storage_uri=os.environ.get("REDIS_URL", "memory://")
+        storage_uri=os.environ.get("REDIS_URL", "memory://"),
+        strategy="fixed-window"
     )
 
 # Known cases removed as requested

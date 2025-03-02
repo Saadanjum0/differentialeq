@@ -1,42 +1,27 @@
 # Differential Equation Analyzer
 
-A web application for analyzing differential equations, checking linearity, and verifying solutions.
+A web application for analyzing, solving, and visualizing differential equations. This application provides tools for checking linearity, verifying solutions, and visualizing differential equations.
 
 ## Features
 
-- **Linearity Checker**: Determine if a differential equation is linear
-- **Solution Verifier**: Check if a function is a solution to a differential equation
-- **Visualization**: Generate plots of solutions
-- **API Access**: RESTful API endpoints for programmatic access
+- **Linearity Checker**: Determine if a differential equation is linear or non-linear
+- **Solution Verifier**: Check if a function is a solution to a given differential equation
+- **Visualization**: Plot solutions to differential equations
+- **API Endpoints**: Access the functionality programmatically
 
-## Deployment Options
+## Local Development Setup
 
-This application is configured for deployment on multiple platforms:
+### Prerequisites
 
-### Vercel Deployment
+- Python 3.9
+- pip (Python package manager)
+- Virtual environment (recommended)
 
-1. Fork this repository
-2. Connect to Vercel
-3. Deploy with the following settings:
-   - Build Command: `./build.sh`
-   - Output Directory: `.vercel/output`
-   - Install Command: `pip install -r requirements.txt`
-
-### Netlify Deployment
-
-1. Connect your GitHub repository to Netlify
-2. Configure the build settings:
-   - Build command: `./netlify-build.sh`
-   - Publish directory: `static`
-3. Deploy the site
-
-## Local Development
-
-To run the application locally:
+### Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/differential-equation-app.git
+   git clone <repository-url>
    cd differential-equation-app
    ```
 
@@ -51,109 +36,86 @@ To run the application locally:
    pip install -r requirements.txt
    ```
 
-4. Run the Flask application:
-   ```
-   ./run_app.sh
-   ```
-   
-   Or for a simpler setup:
+4. Run the application:
    ```
    ./run_app_simple.sh
    ```
+   
+   Or directly with Python:
+   ```
+   python app.py
+   ```
 
-5. Open your browser and navigate to `http://localhost:5000`
+5. Access the application at: http://127.0.0.1:5001
 
-## API Documentation
+## Docker Deployment
 
-The application provides the following API endpoints:
+### Prerequisites
 
-### Check Linearity
+- Docker
+- Docker Compose
 
-**Endpoint**: `/check_linearity`  
-**Method**: POST  
-**Content-Type**: application/json  
+### Running with Docker
 
-**Request Body**:
-```json
-{
-  "equation": "y'' + 3*y' + 2*y = sin(x)"
-}
+1. Build and start the container:
+   ```
+   ./docker-run.sh
+   ```
+   
+   Or manually:
+   ```
+   docker-compose build
+   docker-compose up -d
+   ```
+
+2. Access the application at: http://localhost:5001
+
+3. View logs:
+   ```
+   docker-compose logs -f
+   ```
+
+4. Stop the container:
+   ```
+   docker-compose down
+   ```
+
+## Deployment Options
+
+### Netlify
+
+The application is configured for deployment on Netlify using the following files:
+- `netlify.toml`: Configuration for build settings and redirects
+- `netlify-build.sh`: Custom build script for Netlify
+
+### Vercel
+
+The application is configured for deployment on Vercel using the following files:
+- `vercel.json`: Configuration for build settings and environment variables
+- `vercel-build.sh`: Custom build script for Vercel
+- `.vercel/project.json`: Project configuration for Vercel
+
+## Example Equations to Try
+
+- Linear first-order equation: `y' + 2*y = sin(x)`
+- Non-linear equation: `y' = y^2 * sin(x)`
+- Second-order linear equation: `y'' + 4*y = 0`
+
+## API Usage
+
+The application provides API endpoints for programmatic access:
+
+- `/api/check_linearity`: Check if an equation is linear
+- `/api/verify_solution`: Verify if a function is a solution to an equation
+- `/api/visualize`: Generate visualization data for an equation
+
+Example API request:
 ```
-
-**Response**:
-```json
-{
-  "is_linear": true,
-  "explanation": "The equation is linear because...",
-  "highest_derivative": 2
-}
+curl -X POST http://localhost:5001/api/check_linearity \
+  -H "Content-Type: application/json" \
+  -d '{"equation": "y\' + 2*y = sin(x)"}'
 ```
-
-### Verify Solution
-
-**Endpoint**: `/verify_solution`  
-**Method**: POST  
-**Content-Type**: application/json  
-
-**Request Body**:
-```json
-{
-  "de": "y'' + y = 0",
-  "solution": "sin(x)"
-}
-```
-
-**Response**:
-```json
-{
-  "is_solution": true,
-  "explanation": "The function is a solution because...",
-  "plot_url": "data:image/png;base64,..."
-}
-```
-
-### Health Check
-
-**Endpoint**: `/health`  
-**Method**: GET  
-
-**Response**:
-```json
-{
-  "status": "healthy",
-  "version": "1.0.0",
-  "timestamp": "2023-06-01T12:34:56.789Z"
-}
-```
-
-## Testing
-
-Run the test suite with:
-
-```
-python -m unittest test_flask.py
-```
-
-## Technologies Used
-
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Python with Flask
-- **Mathematics**: SymPy for symbolic mathematics
-- **Visualization**: Matplotlib for plotting
-- **Deployment**: Vercel and Netlify with serverless functions
-
-## Security Features
-
-- HTTPS enforcement
-- Content Security Policy
-- Rate limiting
-- Secure cookies
-- Input validation
 
 ## License
 
-MIT License
-
-## Author
-
-Created by Saad Anjum 
+[MIT License](LICENSE) 

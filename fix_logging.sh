@@ -1,8 +1,25 @@
+#!/bin/bash
+set -e
+
+# Colors for terminal output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}Fixing logging configuration...${NC}"
+
+# Check if logging_config.py exists
+if [ -f "logging_config.py" ]; then
+    echo -e "${GREEN}logging_config.py already exists.${NC}"
+else
+    echo -e "${YELLOW}Creating logging_config.py...${NC}"
+    cat > logging_config.py << 'EOL'
 import os
 import logging
 import time
 from logging.handlers import RotatingFileHandler
-from flask import request as flask_request, g
+from flask import request, g
 
 # Create logs directory if it doesn't exist
 if not os.path.exists('logs'):
@@ -47,19 +64,10 @@ def setup_logging(app):
     
     return app.logger
 
-def log_request(app, request=None, response=None):
-    """Log details about the current request
-    
-    Args:
-        app: The Flask application instance
-        request: The request object (optional)
-        response: The response object (optional)
-    """
-    # Use the provided request or fall back to flask.request
-    req = request if request is not None else flask_request
-    
+def log_request(app):
+    """Log details about the current request"""
     # Skip logging for static files
-    if req.path.startswith('/static'):
+    if request.path.startswith('/static'):
         return
     
     # Calculate request processing time if available
@@ -69,22 +77,33 @@ def log_request(app, request=None, response=None):
         duration = 0
     
     # Log request details
-    status_code = response.status_code if response else ""
     app.logger.info(
-        f"Request: {req.method} {req.path} "
-        f"({req.remote_addr}) - "
-        f"Status: {status_code} - "
+        f"Request: {request.method} {request.path} "
+        f"({request.remote_addr}) - "
         f"Duration: {duration:.4f}s"
     )
-    
-    # Return the response if provided
-    return response
 
 def log_error(app, error, status_code=500):
     """Log an error with details"""
     app.logger.error(
         f"Error {status_code}: {str(error)} - "
-        f"URL: {flask_request.url} - "
-        f"Method: {flask_request.method} - "
-        f"IP: {flask_request.remote_addr}"
-    ) 
+        f"URL: {request.url} - "
+        f"Method: {request.method} - "
+        f"IP: {request.remote_addr}"
+    )
+EOL
+    echo -e "${GREEN}Created logging_config.py${NC}"
+fi
+
+# Create logs directory
+echo -e "${YELLOW}Creating logs directory if it doesn't exist...${NC}"
+mkdir -p logs
+echo -e "${GREEN}Logs directory is ready.${NC}"
+
+# Install required logging packages
+echo -e "${YELLOW}Installing logging dependencies...${NC}"
+pip install logging-formatter-anticrlf colorama
+
+echo -e "${GREEN}Logging configuration fixed!${NC}"
+echo -e "${YELLOW}You can now run the application with:${NC}"
+echo "./run_app_improved.sh" 

@@ -1,0 +1,1 @@
+2025-03-02 13:49:12,915 - app - ERROR - Error 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. - URL: http://192.168.1.9:5001/favicon.ico - Method: GET - IP: 192.168.1.9

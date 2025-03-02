@@ -1,6 +1,0 @@
-{
-  "pythonVersion": "3.9",
-  "installDependencies": true,
-  "createVirtualEnvironment": true,
-  "installFromRequirements": true
-} 

@@ -1,0 +1,42 @@
+2025-03-02 13:46:14,318 - app - INFO - Differential Equation Analyzer startup
+2025-03-02 13:46:14,318 INFO: Differential Equation Analyzer startup [in /Users/saad/Desktop/differential-equation-app/app.py:74]
+2025-03-02 13:46:15,977 - app - INFO - Differential Equation Analyzer startup
+2025-03-02 13:46:15,977 INFO: Differential Equation Analyzer startup [in /Users/saad/Desktop/differential-equation-app/app.py:74]
+2025-03-02 13:46:46,413 - app - INFO - Incoming GET request to http://192.168.1.9:5001/
+2025-03-02 13:46:46,413 INFO: Incoming GET request to http://192.168.1.9:5001/ [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:47:51,141 - app - INFO - Differential Equation Analyzer startup
+2025-03-02 13:47:51,141 INFO: Differential Equation Analyzer startup [in /Users/saad/Desktop/differential-equation-app/app.py:74]
+2025-03-02 13:49:03,615 - app - INFO - Differential Equation Analyzer startup
+2025-03-02 13:49:03,615 INFO: Differential Equation Analyzer startup [in /Users/saad/Desktop/differential-equation-app/app.py:74]
+2025-03-02 13:49:04,735 - app - INFO - Differential Equation Analyzer startup
+2025-03-02 13:49:04,735 INFO: Differential Equation Analyzer startup [in /Users/saad/Desktop/differential-equation-app/app.py:74]
+2025-03-02 13:49:10,357 - app - INFO - Incoming GET request to http://192.168.1.9:5001/
+2025-03-02 13:49:10,357 INFO: Incoming GET request to http://192.168.1.9:5001/ [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:10,379 - app - INFO - Request: GET / (192.168.1.9) - Status: 200 - Duration: 0.0000s
+2025-03-02 13:49:10,379 INFO: Request: GET / (192.168.1.9) - Status: 200 - Duration: 0.0000s [in /Users/saad/Desktop/differential-equation-app/logging_config.py:73]
+2025-03-02 13:49:10,838 - app - INFO - Incoming GET request to http://192.168.1.9:5001/static/css/styles.css?v=1.0.2
+2025-03-02 13:49:10,838 INFO: Incoming GET request to http://192.168.1.9:5001/static/css/styles.css?v=1.0.2 [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:10,841 - app - INFO - Incoming GET request to http://192.168.1.9:5001/static/js/script.js
+2025-03-02 13:49:10,841 INFO: Incoming GET request to http://192.168.1.9:5001/static/js/script.js [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:12,914 - app - INFO - Incoming GET request to http://192.168.1.9:5001/favicon.ico
+2025-03-02 13:49:12,914 INFO: Incoming GET request to http://192.168.1.9:5001/favicon.ico [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:12,915 - app - ERROR - Error 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. - URL: http://192.168.1.9:5001/favicon.ico - Method: GET - IP: 192.168.1.9
+2025-03-02 13:49:12,915 ERROR: Error 404 Not Found: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. - URL: http://192.168.1.9:5001/favicon.ico - Method: GET - IP: 192.168.1.9 [in /Users/saad/Desktop/differential-equation-app/logging_config.py:85]
+2025-03-02 13:49:12,922 - app - INFO - Request: GET /favicon.ico (192.168.1.9) - Status: 404 - Duration: 0.0000s
+2025-03-02 13:49:12,922 INFO: Request: GET /favicon.ico (192.168.1.9) - Status: 404 - Duration: 0.0000s [in /Users/saad/Desktop/differential-equation-app/logging_config.py:73]
+2025-03-02 13:49:20,536 - app - INFO - Incoming POST request to http://192.168.1.9:5001/check_linearity
+2025-03-02 13:49:20,536 INFO: Incoming POST request to http://192.168.1.9:5001/check_linearity [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:20,546 - app - INFO - Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s
+2025-03-02 13:49:20,546 INFO: Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s [in /Users/saad/Desktop/differential-equation-app/logging_config.py:73]
+2025-03-02 13:49:23,280 - app - INFO - Incoming POST request to http://192.168.1.9:5001/check_linearity
+2025-03-02 13:49:23,280 INFO: Incoming POST request to http://192.168.1.9:5001/check_linearity [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:23,282 - app - INFO - Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s
+2025-03-02 13:49:23,282 INFO: Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s [in /Users/saad/Desktop/differential-equation-app/logging_config.py:73]
+2025-03-02 13:49:25,291 - app - INFO - Incoming POST request to http://192.168.1.9:5001/check_linearity
+2025-03-02 13:49:25,291 INFO: Incoming POST request to http://192.168.1.9:5001/check_linearity [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:25,293 - app - INFO - Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s
+2025-03-02 13:49:25,293 INFO: Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s [in /Users/saad/Desktop/differential-equation-app/logging_config.py:73]
+2025-03-02 13:49:27,632 - app - INFO - Incoming POST request to http://192.168.1.9:5001/check_linearity
+2025-03-02 13:49:27,632 INFO: Incoming POST request to http://192.168.1.9:5001/check_linearity [in /Users/saad/Desktop/differential-equation-app/app.py:739]
+2025-03-02 13:49:27,634 - app - INFO - Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s
+2025-03-02 13:49:27,634 INFO: Request: POST /check_linearity (192.168.1.9) - Status: 200 - Duration: 0.0000s [in /Users/saad/Desktop/differential-equation-app/logging_config.py:73]

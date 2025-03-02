@@ -1,0 +1,30 @@
+# Core dependencies
+flask==2.0.1
+werkzeug==2.0.1
+Jinja2==3.0.1
+itsdangerous==2.0.1
+MarkupSafe==2.0.1
+
+# Scientific computing
+numpy==1.20.3
+sympy==1.9
+matplotlib==3.4.3
+
+# Server and deployment
+gunicorn==20.1.0
+python-dotenv==0.19.0
+
+# Security and performance
+flask-talisman==1.0.0
+pyOpenSSL==23.2.0
+flask-limiter==2.8.1
+flask-cors==3.0.10
+
+# Utilities
+psutil==5.9.0
+requests==2.31.0
+python-dateutil==2.8.2
+colorama==0.4.4
+
+# Logging
+logging-formatter-anticrlf==1.2 
